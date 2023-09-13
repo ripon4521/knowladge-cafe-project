@@ -7,6 +7,7 @@ const Blog = () => {
     const [cafes, setcafes] = useState([]);
     const [bookmark, setbookmark] = useState([]);
     const [readingtime, setreadingtime] = useState(0);
+    const [readBooks, setReadBooks]=useState([]);
     useEffect( ()=>{
         fetch('./blog.json')
         .then(res => res.json())
@@ -17,16 +18,60 @@ const Blog = () => {
 
     const handleBookmark =blog =>{
         // console.log(blog);
+        const isexist = bookmark.find(item => item.id==blog.id)
+        if (isexist) {
+            return alert('already marked')
+        }
         const newBokkmark = [...bookmark, blog];
         setbookmark(newBokkmark);
-        console.log(setbookmark);
+        // console.log(setbookmark);
     }
 
-    const handlemarkasRead = time =>{
-        // console.log('addded time',time.reading_time);
-        setreadingtime(readingtime+time.reading_time)
+    const handlemarkasRead = book =>{
+    //     const remaining = bookmark.filter(book => book.id!== time.id)
+    //     // console.log('addded time',time.reading_time);
+    //    console.log(remaining);
+    //     setreadingtime(readingtime+time.reading_time)
+    //     // console.log(time.id);
+        
+       
+    //    setbookmark(remaining)
+    const totalReadTimes = readBooks.reduce((total, item) => item.reading_time + total, 0)
+    const isexist = readBooks.find(item => item.id===book.id)
+   
+    console.log(isexist, book);
+        if (isexist) {
+            return alert('already marked')
+        }
+     
+            setReadBooks([...readBooks, book])
+            
+            // console.log(setReadBooks);
+            setreadingtime(totalReadTimes+book.reading_time)
+            
+       
+    
+    
 
     }
+
+    const handleRemoveMarked =remove =>{
+            const remaining = bookmark.filter(book => book.id!== remove.id)
+           
+            // console.log(remove);
+            const isexist = readBooks.find(item => item.id===remove.id)
+            
+
+          if (isexist) {
+            setreadingtime(readingtime-remove.reading_time)
+          }
+          const reamingbooks = readBooks.filter(b=>b.id!==remove.id)
+          setReadBooks(reamingbooks)
+    
+    
+    setbookmark(remaining)
+    }
+
 
 
     return (
@@ -63,6 +108,7 @@ const Blog = () => {
           <div className="">#{caffe.hashtags[1]}</div>
         </div>
         <button onClick={()=>handlemarkasRead(caffe)} className='border-b w-[100px] text-blue-500' >Mark as read</button>
+        <button onClick={()=>handleRemoveMarked(caffe)} className='btn btn-primary'>Remove Marke As Read</button>
       </div>
     </div>
                 </div>
